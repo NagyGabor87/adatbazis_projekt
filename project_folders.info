@@ -1,19 +1,19 @@
 root/
 ├── .venv/
 ├── code/
-│   ├── create2db.py
-│   ├── cleanData.py
-│   ├── cleanTemp.py
-│   ├── putData2DB.py
-│   ├── main.py
-│   └── check_structure.py
+│   ├── create2db.py (megvizsgálja, hogy létezik -e adatbázis, ha nem, akkor létrehozza)
+│   ├── decAdagok.py (Adagok.csv dekódolását végzi)
+│   ├── cleaning.py (bárhonnan meghivható adat tisztitó, adat betöltés előkészitéséhez)
+│   ├── putDataAdagok2db.py
+│   ├── main.py (ez fogja össze az összes .py -t, ezt kell futtatni)
+│   └── ......
 ├── db/
-│   └── data.db (ezt hozza létre a program)
-├── clean/
-│   ├── Adagok_clean.csv (ezt hozza létre a program)
-│   └── Hutopanelekai_clean.csv (ezt hozza létre a program)
+│   └── data.db (sq-litead atbázis, create2db.py hozza létre)
+├── temp/
+│   ├── Adagok_decoded.csv (program hozza létre dekódolás után, pl.a cleanData.py)
+│   └── 
 ├── import/
-│   ├── Adagok.csv (ezt kell feltölteni)
-│   └── Hutopanelekai.csv (ezt kell feltölteni)
+│   ├── Adagok.csv (alap nyers csv)
+│   └── Hutopanelekai.csv (alap nyers csv)
 └── export/
     (üres - export fájlok kerülnek ide később)
