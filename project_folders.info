@@ -14,5 +14,5 @@ root/
 │   └── 
 ├── import/
 │   ├── Adagok.csv (alap nyers csv)
-│   └── Hutopanelekai.csv (alap nyers csv)
+│   └── Hutopanelek.csv (alap nyers csv)
 └── export/ (adatbázis betöltésre kész fájlok mappája)
