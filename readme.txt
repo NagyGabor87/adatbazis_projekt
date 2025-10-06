@@ -1,4 +1,4 @@
-A megfelelő futtatáshoz hozd létre 
+A megfelelő futtatáshoz hozd létre és
 - telepitsd a requirements.txt fájlban lévő függőségeket
 - a project_folder.info szerinti mapparendszert a py projekten belül
 - másold be a nyers .csv fájlokat az import mappába
