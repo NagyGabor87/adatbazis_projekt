@@ -4,7 +4,7 @@ root/
 │   ├── create2db.py (megvizsgálja, hogy létezik -e adatbázis, ha nem, akkor létrehozza)
 │   ├── decAdagok.py (Adagok.csv dekódolását végzi)
 │   ├── cleaning.py (bárhonnan meghivható adat tisztitó, adat betöltés előkészitéséhez)
-│   ├── putDataAdagok2db.py
+│   ├── putDataAdagok2db.py (megvizsgálja, hogy létezik -e az Adagok tábla, ha nem, akkor létrehozza)
 │   ├── main.py (ez fogja össze az összes .py -t, ezt kell futtatni)
 │   └── ......
 ├── db/
