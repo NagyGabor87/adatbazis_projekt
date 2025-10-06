@@ -3,17 +3,19 @@ root/
 ├── code/
 │   ├── create2db.py (megvizsgálja, hogy létezik -e adatbázis, ha nem, akkor létrehozza)
 |   |── browse.py (átvizsgálja egy mappa tartalmát .csv -k után kutatva. Behúzza és átadja feldolgozásra)
-│   ├── decAdagok.py (Adagok.csv dekódolását végzi)
+│   ├── decoding.py (Adagok.csv dekódolását végzi)
 │   ├── cleaning.py (bárhonnan meghivható adat tisztitó, adat betöltés előkészitéséhez)
-│   ├── putDataAdagok2db.py (megvizsgálja, hogy létezik -e az Adagok tábla, ha nem, akkor létrehozza)
+│   ├── putDataAdagok2db.py (megvizsgálja, hogy létezik -e a betöltendő adatok szerinti tábla, ha nem, akkor létrehozza)
 │   ├── main.py (ez fogja össze az összes .py -t, ezt kell futtatni)
 │   └── ......
 ├── db/
 │   └── data.db (sq-litead atbázis, create2db.py hozza létre)
-├── temp/
-│   ├── Adagok_decoded.csv (program hozza létre dekódolás után, pl.a cleanData.py)
-│   └── 
+├── temp/ (ideiglenes, további feldolgozásra előkészitett fájlok mappája)
+│   ├── Adagok_decoded.csv (program hozza létre dekódolás után, a decoding.py)
+│   └── Hutopanelek_decoded.csv (program hozza létre dekódolás után, a decoding.py)
 ├── import/
 │   ├── Adagok.csv (alap nyers csv)
 │   └── Hutopanelek.csv (alap nyers csv)
-└── export/ (adatbázis betöltésre kész fájlok mappája)
+├── export/ (adatbázis betöltésre kész fájlok mappája)
+│   ├── Adagok_decoded_clean.csv (program hozza létre dekódolás után, a cleanData.py)
+│   └── Hutopanelek_decoded_clean (program hozza létre dekódolás után, a cleanData.py)
