@@ -1,0 +1,19 @@
+root/
+├── .venv/
+├── code/
+│   ├── create2db.py
+│   ├── cleanData.py
+│   ├── cleanTemp.py
+│   ├── putData2DB.py
+│   ├── main.py
+│   └── check_structure.py
+├── db/
+│   └── data.db (ezt hozza létre a program)
+├── clean/
+│   ├── Adagok_clean.csv (ezt hozza létre a program)
+│   └── Hutopanelekai_clean.csv (ezt hozza létre a program)
+├── import/
+│   ├── Adagok.csv (ezt kell feltölteni)
+│   └── Hutopanelekai.csv (ezt kell feltölteni)
+└── export/
+    (üres - export fájlok kerülnek ide később)
