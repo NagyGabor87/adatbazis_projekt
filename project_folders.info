@@ -16,6 +16,6 @@ root/
 ├── import/
 │   ├── Adagok.csv (alap nyers csv)
 │   └── Hutopanelek.csv (alap nyers csv)
-├── export/ (adatbázis betöltésre kész fájlok mappája)
-│   ├── Adagok_decoded_clean.csv (program hozza létre dekódolás után, a cleanData.py)
-│   └── Hutopanelek_decoded_clean (program hozza létre dekódolás után, a cleanData.py)
+└── export/ (adatbázis betöltésre kész fájlok mappája)
+    ├── Adagok_decoded_clean.csv (program hozza létre dekódolás után, a cleanData.py)
+    └── Hutopanelek_decoded_clean (program hozza létre dekódolás után, a cleanData.py)
