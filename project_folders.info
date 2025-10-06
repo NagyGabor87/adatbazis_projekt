@@ -2,6 +2,7 @@ root/
 ├── .venv/
 ├── code/
 │   ├── create2db.py (megvizsgálja, hogy létezik -e adatbázis, ha nem, akkor létrehozza)
+|   |── browse.py (átvizsgálja egy mappa tartalmát .csv -k után kutatva. Behúzza és átadja feldolgozásra)
 │   ├── decAdagok.py (Adagok.csv dekódolását végzi)
 │   ├── cleaning.py (bárhonnan meghivható adat tisztitó, adat betöltés előkészitéséhez)
 │   ├── putDataAdagok2db.py (megvizsgálja, hogy létezik -e az Adagok tábla, ha nem, akkor létrehozza)
