@@ -1,13 +1,15 @@
 root/
 ├── .venv/
 ├── code/
-│   ├── create2db.py (megvizsgálja, hogy létezik -e adatbázis, ha nem, akkor létrehozza)
 |   |── browse.py (átvizsgálja egy mappa tartalmát .csv -k után kutatva. Behúzza és átadja feldolgozásra)
-│   ├── decoding.py (Adagok.csv dekódolását végzi)
 │   ├── cleaning.py (bárhonnan meghivható adat tisztitó, adat betöltés előkészitéséhez)
-│   ├── putDataAdagok2db.py (megvizsgálja, hogy létezik -e a betöltendő adatok szerinti tábla, ha nem, akkor létrehozza)
-│   ├── main.py (ez fogja össze az összes .py -t, ezt kell futtatni)
-│   └── ......
+│   ├── create2db.py (megvizsgálja, hogy létezik -e az adatbázis, ha nem, akkor létrehozza)
+│   ├── db_loader.py (megvizsgálja, hogy létezik -e a betöltendő adatok szerinti tábla az adatbázisban és ha nem, akkor létrehozza azokat és betölti az adatokat)
+│   ├── decoding.py (minden import mappában lévő *.csv kódolását igyekszik megállapitani, illetve korrigálni)
+│   ├── normalizer_adagok.py (3. normál formázára hozza a dekódolt és megtisztitott adagok táblát)
+│   ├── normalizer_homerseklet.py (3. normál formázára hozza a dekódolt és megtisztitott hőmérséklet táblát)
+│   ├── normalizer_prepare.py (normál formázásra beolvassa az exportból a .csv -t és átadja a specifikus .py -nak)
+│   └── main.py (ez fogja össze az összes .py -t, ezt kell futtatni!)
 ├── db/
 │   └── data.db (sq-litead atbázis, create2db.py hozza létre)
 ├── temp/ (ideiglenes, további feldolgozásra előkészitett fájlok mappája)
@@ -16,6 +18,6 @@ root/
 ├── import/
 │   ├── Adagok.csv (alap nyers csv)
 │   └── Hutopanelek.csv (alap nyers csv)
-└── export/ (adatbázis betöltésre kész fájlok mappája)
+└── export/ (NF feldolgozásra előkészitett és adatbázis betöltésre kész fájlok mappája)
     ├── Adagok_decoded_clean.csv (program hozza létre dekódolás után, a cleanData.py)
     └── Hutopanelek_decoded_clean (program hozza létre dekódolás után, a cleanData.py)
