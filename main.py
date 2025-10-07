@@ -1,5 +1,4 @@
 import os
-import shutil
 import sqlite3
 from decoding import decode_csv_file
 from browse import scan_csv_files, display_csv_files
