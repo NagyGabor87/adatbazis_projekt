@@ -6,24 +6,14 @@ import chardet
 def decode_csv_file(input_file_path: str, output_dir: str) -> str:
     """
     CSV fájl dekódolása és mentése UTF-8-BOM formátumban
-
-    Args:
-        input_file_path: A bemeneti CSV fájl teljes útvonala
-        output_dir: A kimeneti könyvtár útvonala
-
-    Returns:
-        Az exportált fájl útvonala, vagy üres string hiba esetén
     """
 
-    # Fájl ellenőrzése
     if not os.path.exists(input_file_path):
-        print(f"✗ A megadott fájl nem található: {input_file_path}")
+        print(f"✗ A fájl nem található: {input_file_path}")
         return ""
 
-    # Kimeneti könyvtár ellenőrzése és létrehozása
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
-        print(f"✓ Kimeneti könyvtár létrehozva: {output_dir}")
 
     # Kimeneti fájlnév generálása
     original_filename = os.path.basename(input_file_path)
@@ -31,34 +21,43 @@ def decode_csv_file(input_file_path: str, output_dir: str) -> str:
     output_filename = f"{name_without_ext}_decoded.csv"
     output_file_path = os.path.join(output_dir, output_filename)
 
-    print(f"Bemeneti fájl: {input_file_path}")
-    print(f"Kimeneti fájl: {output_file_path}")
+    print(f"📥 Bemeneti: {original_filename}")
+    print(f"📤 Kimeneti: {output_filename}")
 
-    # 1. Lépés: Kódolás automatikus felismerése chardet-tel
+    # 1. Kódolás automatikus felismerése
     print("\n1. Kódolás automatikus felismerése...")
-    detected_encoding = detect_encoding_with_chardet(input_file_path)
+    detected_encoding, confidence = detect_encoding_with_chardet(input_file_path)
 
     if detected_encoding:
         print(f"✓ Automatikus felismerés: {detected_encoding}")
+        print(f"📊 Megbízhatóság: {confidence:.1%}")
 
         # Megjelenítjük az automatikusan felismert kódolás adatait
         print(f"\nAutomatikusan felismert kódolás adatai:")
         show_file_preview(input_file_path, detected_encoding)
 
-        use_auto = input("\nSzeretnéd használni az automatikusan felismert kódolást? (i/n): ").strip().lower()
-        if use_auto == 'i':
+        # DÖNTÉSI PONT: 99%+ megbízhatóság esetén automatikusan elfogadjuk
+        if confidence >= 0.99:
+            print("🎯 99%+ megbízhatóság → automatikus elfogadás")
             selected_encoding = detected_encoding
         else:
-            selected_encoding = select_encoding_manual(input_file_path)
+            print(f"⚠️  Alacsony megbízhatóság ({confidence:.1%}) → kézi választás szükséges")
+            response = input("\nSzeretnéd használni az automatikusan felismert kódolást? (i/n): ").strip().lower()
+
+            if response == 'i':
+                print("❌ MEGSZAKÍTVA: Alacsony megbízhatóság miatt a további feldolgozás hibás lehet!")
+                print("🚪 Program leáll...")
+                exit(1)
+            else:
+                selected_encoding = select_encoding_manual(input_file_path)
     else:
         print("✗ Automatikus felismerés sikertelen, kézi választás...")
         selected_encoding = select_encoding_manual(input_file_path)
 
     if not selected_encoding:
-        print("✗ Nem sikerült kódolást kiválasztani")
         return ""
 
-    # 2. Lépés: Adatok beolvasása kiválasztott kódolással
+    # 2. Adatok beolvasása kiválasztott kódolással
     print(f"\n2. Adatok beolvasása {selected_encoding} kódolással...")
     try:
         df = pd.read_csv(input_file_path, delimiter=';', encoding=selected_encoding)
@@ -74,7 +73,7 @@ def decode_csv_file(input_file_path: str, output_dir: str) -> str:
         print(f"✗ Hiba a beolvasás során: {e}")
         return ""
 
-    # 3. Lépés: Mentés UTF-8-SIG kódolással (Excel kompatibilis)
+    # 3. Mentés UTF-8-SIG kódolással
     try:
         df.to_csv(output_file_path, index=False, sep=';', encoding='utf-8-sig')
         print(f"\n✓ Adatok exportálva: {output_file_path}")
@@ -87,36 +86,43 @@ def decode_csv_file(input_file_path: str, output_dir: str) -> str:
         return ""
 
 
-def detect_encoding_with_chardet(input_file: str) -> str:
+def detect_encoding_with_chardet(input_file: str):
     """Kódolás automatikus felismerése chardet könyvtárral"""
     try:
         with open(input_file, 'rb') as file:
-            # Az első 10KB-ból próbálja megállapítani a kódolást
-            raw_data = file.read(10000)
+            raw_data = file.read(50000)
 
         result = chardet.detect(raw_data)
         encoding = result['encoding']
         confidence = result['confidence']
 
-        print(f"   Felismert kódolás: {encoding}")
-        print(f"   Megbízhatóság: {confidence:.1%}")
+        # Kódolás normalizálása
+        encoding = normalize_encoding_name(encoding)
 
-        # Csak akkor fogadjuk el, ha elég magas a megbízhatóság
-        if confidence > 0.7:
-            # Ellenőrizzük, hogy tényleg működik-e
+        if confidence > 0.6:
             try:
                 pd.read_csv(input_file, delimiter=';', encoding=encoding, nrows=2)
-                return encoding
+                return encoding, confidence
             except:
-                print(f"   A felismert kódolás nem működik a pandas-szal")
-                return ""
+                return "", 0
         else:
-            print("   A megbízhatóság túl alacsony")
-            return ""
+            return "", 0
 
     except Exception as e:
-        print(f"   Hiba a chardet használata során: {e}")
-        return ""
+        print(f"   Hiba: {e}")
+        return "", 0
+
+
+def normalize_encoding_name(encoding: str) -> str:
+    """Kódolás nevek normalizálása"""
+    encoding_map = {
+        'ISO-8859-2': 'latin2',
+        'ISO-8859-1': 'latin1',
+        'Windows-1250': 'cp1250',
+        'Windows-1252': 'cp1252',
+        'UTF-8-SIG': 'utf-8-sig'
+    }
+    return encoding_map.get(encoding, encoding)
 
 
 def show_file_preview(input_file: str, encoding: str) -> None:
@@ -137,7 +143,7 @@ def select_encoding_manual(input_file: str) -> str:
     encodings = ['latin2', 'cp852', 'cp1250', 'utf-8']
     working_encodings = []
 
-    print("\nKézi kódolás kiválasztása...\n")
+    print("\n🧩 Kézi kódolás kiválasztása...\n")
 
     for encoding in encodings:
         try:
@@ -156,43 +162,34 @@ def select_encoding_manual(input_file: str) -> str:
             print(f"✗ NEM MŰKÖDIK - {str(e)[:60]}\n")
 
     if not working_encodings:
-        print("Egyik kódolás sem működik!")
+        print("❌ Egyik kódolás sem működik!")
         return ""
 
     # Választás
     print("Működő kódolások:")
     for i, encoding in enumerate(working_encodings, 1):
         print(f"  {i}. {encoding}")
+    print(f"  {len(working_encodings) + 1}. ❌ Manuálisan oldom meg (kilépés)")
 
-    try:
-        choice = int(input(f"\nVálassz kódolást (1-{len(working_encodings)}): "))
+    # Input kívül a try-except blokkon
+    choice_input = input(f"\nVálassz kódolást (1-{len(working_encodings) + 1}): ").strip()
+
+    # Ellenőrizzük, hogy szám-e
+    if not choice_input.isdigit():
+        print("❌ Érvénytelen választás! Csak számot adj meg.")
+        print("🚪 Program leáll...")
+        exit(1)
+
+    choice = int(choice_input)
+
+    if choice == len(working_encodings) + 1:
+        print("\n❌ KILÉPÉS: Felhasználó manuális megoldást választott")
+        print("🚪 Program leáll...")
+        exit(1)
+
+    if 1 <= choice <= len(working_encodings):
         return working_encodings[choice - 1]
-    except:
-        print("Érvénytelen választás!")
-        return ""
-
-
-def main() -> None:
-    """Főprogram - példa használatra"""
-
-    # Példa használat - megtartva az eredeti útvonalakat
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-    root_dir = os.path.dirname(current_dir)
-
-    input_file = os.path.join(root_dir, 'import', 'Adagok.csv')
-    export_dir = os.path.join(root_dir, 'temp')
-
-    if os.path.exists(input_file):
-        result = decode_csv_file(input_file, export_dir)
-        if result:
-            print(f"\n🎉 Sikeres dekódolás: {result}")
-        else:
-            print(f"\n❌ A dekódolás sikertelen")
     else:
-        print(f"✗ A példa fájl nem található: {input_file}")
-        print("\nHasználat más fájlokkal:")
-        print("decode_csv_file('c:/utvonal/bemeneti.csv', 'c:/utvonal/kimeneti_mappa')")
-
-
-if __name__ == "__main__":
-    main()
+        print("❌ Érvénytelen választás!")
+        print("🚪 Program leáll...")
+        exit(1)
