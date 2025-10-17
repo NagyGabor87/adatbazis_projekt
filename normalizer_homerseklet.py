@@ -36,7 +36,7 @@ def normalize_homerseklet(df):
         print(f"  ✅ Duplikáltak eltávolítva: {len(homerseklet_3nf)} egyedi mérés maradt")
 
     return {
-        'homerseklet_meresek_NFdone': homerseklet_3nf
+        'panel_szam_NFdone': homerseklet_3nf
     }
 
 
