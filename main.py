@@ -7,7 +7,6 @@ from cleaning import clean_file
 from normalizer_prepare import normalize_file
 from db_loader import load_nf_tables_to_db
 
-
 def cleanup_folder(folder_path: str, folder_name: str) -> None:
     """
     Mappa tartalmának kiürítése megerősítéssel
@@ -155,7 +154,7 @@ def main():
 
     temp_folder = os.path.join(root_dir, 'temp')
     export_folder = os.path.join(root_dir, 'export')
-    db_path = os.path.join(root_dir, 'db', 'data.db')
+    db_path = os.path.join(root_dir, 'db', 'data.db')  # root/db/data.db
 
     # Temp mappa kiürítése
     cleanup_folder(temp_folder, "temp")
@@ -163,11 +162,11 @@ def main():
     # Export mappa kiürítése
     cleanup_folder(export_folder, "export")
 
-    # 1. LÉPÉS: Adatbázis létrehozás
+    # 1. LÉPÉS: Adatbázis létrehozás - ÁTADJUK A TELJES ÚTVONALAT
     print("\n1. 📊 ADATBÁZIS LÉTREHOZÁS")
     print("-" * 30)
 
-    db_success = create_database()
+    db_success = create_database(db_path)  # <- MÓDOSÍTOTT: átadjuk a db_path-et
 
     if not db_success:
         print("❌ Adatbázis létrehozása sikertelen, folyamat leállítva!")
@@ -213,7 +212,7 @@ def main():
         print("❌ Adatbázis betöltés megszakítva!")
         return
 
-    load_nf_tables_to_db(export_folder, db_path)
+    load_nf_tables_to_db(export_folder, db_path)  # <- MÓDOSÍTOTT: átadjuk a db_path-et
 
     # 6. LÉPÉS: Végleges eredmény
     print("\n" + "=" * 60)
