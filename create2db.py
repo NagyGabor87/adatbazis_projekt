@@ -2,21 +2,27 @@ import sqlite3
 import os
 
 
-def create_database():
+def create_database(db_path=None):
     """
-    Adatbázis létrehozása, ha még nem létezik
+    Adatbázis létrehozása a megadott útvonalon, vagy root/db/data.db alapértelmezettként
+
+    Args:
+        db_path: Opcionális - adatbázis útvonala. Ha None, akkor root/db/data.db lesz
+
     Returns:
         bool: Mindig True, ha sikeres
     """
+    # Alapértelmezett útvonal beállítása
+    if db_path is None:
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        root_dir = os.path.dirname(current_dir)
+        db_path = os.path.join(root_dir, 'db', 'data.db')
 
     # Ellenőrizzük, hogy létezik-e a db mappa
-    db_dir = 'db'
+    db_dir = os.path.dirname(db_path)
     if not os.path.exists(db_dir):
         os.makedirs(db_dir)
         print(f"✅ 'db' mappa létrehozva: {db_dir}")
-
-    # Adatbázis fájl útvonala
-    db_path = 'db/data.db'
 
     # Ellenőrizzük, hogy létezik-e az adatbázis fájl
     if os.path.exists(db_path):
